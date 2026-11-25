@@ -1,0 +1,10 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {move,damage,hit} from '../src/engine/core.ts';
+import {jobs} from '../src/jobs/catalog.ts';
+import {decode} from '../src/saves/local.ts';
+test('diagonal movement normalized',()=>{const p=move({x:0,y:0},{x:1,y:1},100,1);assert.ok(Math.abs(Math.hypot(p.x,p.y)-100)<1e-8)});
+test('minimum damage',()=>assert.equal(damage(1,100),1));
+test('HP bounded',()=>assert.equal(hit({x:0,y:0,hp:10,maxHp:10,speed:1},20).hp,0));
+test('12 unique jobs',()=>assert.equal(new Set(jobs.map(j=>j[0])).size,12));
+test('save validation',()=>{assert.equal(decode('{"version":1,"job":"hero","level":1,"xp":0}').job,'hero');assert.throws(()=>decode('{"version":1,"job":"bad"}'))});
